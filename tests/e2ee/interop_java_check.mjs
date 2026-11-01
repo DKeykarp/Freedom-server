@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+const store = {};
+globalThis.localStorage = { getItem: (k) => store[k] ?? null, setItem: (k, v) => { store[k] = v; }, removeItem: () => {} };
+(0, eval)(fs.readFileSync(new URL('../../server/web/e2ee.js', import.meta.url), 'utf8'));
+const E = globalThis.E2E, T = E._t;
+const js = JSON.parse(fs.readFileSync('/tmp/js_out.json'));
+const kv = Object.fromEntries(fs.readFileSync('/tmp/java_out.txt', 'utf8').split('\n').map((l) => [l.slice(0, l.indexOf('=')), l.slice(l.indexOf('=') + 1)]));
+const A = js.users.alice, B = js.users.bob;
+const kek = await T.hkdf(await T.pbkdf2(A.pw, T.U('freedom-e2ee-v1:alice'), js.iters), 'kek');
+E.init({ api: async () => ({ dh_pub: B.dh, sig_pub: B.sig }), me: 'alice' });
+E.setIdentity(await E.openBlob(A.blob, kek, 'alice'), 'alice');
+await T.unwrap({ eph: kv.env_eph, n: kv.env_n, c: kv.env_c, sig: kv.env_sig, room_id: 11, epoch: 1, sender: 'bob' });
+const pl = await E.decryptMessage({ room_id: 11, epoch: 1, username: 'bob', ct: kv.msg_ct, sig: kv.msg_sig });
+const f = await E.decryptFile(new Blob([T.unb64(kv.file_enc)]), kv.file_key, kv.file_nonce);
+const sha = T.b64(new Uint8Array(await crypto.subtle.digest('SHA-256', await f.arrayBuffer())));
+if (sha !== kv.file_sha) throw new Error('file');
+console.log('JS: конверт, сообщение и файл от Java (WebCrypto проверяет подписи Java) — OK:', pl.text);

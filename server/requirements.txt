@@ -1,0 +1,7 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
+firebase-admin>=6.5   # нужен только для push-уведомлений
+# faster-whisper>=1.0  # нужен только для распознавания речи (WHISPER_MODEL, см. README §14) — ставится отдельно,
+                       # по умолчанию не тянется: тяжёлая зависимость (ctranslate2, веса модели — сотни МБ),
+                       # плюс системный ffmpeg (apt install ffmpeg). Раскомментируйте и поставьте, если нужна функция.

@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f7fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17212b" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<title>Freedom</title>
+<link rel="icon" type="image/svg+xml" href="/logo.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/favicon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<!-- вход -->
+<div id="auth">
+  <div id="authBox">
+  <form id="authForm" autocomplete="on">
+    <img class="brandmark" src="/logo.svg" width="64" height="64" alt="">
+    <h1>Freedom</h1>
+    <p class="muted">Общение без границ · 🔒 сквозное шифрование</p>
+    <input id="aUser" placeholder="Имя пользователя" autocomplete="username" required minlength="3" maxlength="32">
+    <input id="aPass" type="password" placeholder="Пароль" autocomplete="current-password" required minlength="6">
+    <div id="authErr" class="err"></div>
+    <small class="muted">Пароль защищает ваши ключи шифрования и не отправляется на сервер. Восстановить его невозможно.</small>
+    <button class="primary" id="btnLogin" type="submit">Войти</button>
+    <button type="button" id="btnRegister">Создать аккаунт</button>
+  </form>
+
+  <section id="dl" class="hidden" aria-label="Приложение для компьютера">
+    <h2><span class="icon" data-icon="download" data-icon-size="18"></span> Приложение для компьютера</h2>
+    <p class="muted">Отдельное окно с уведомлениями, звонками и голосовыми. Устанавливается одним файлом.</p>
+    <div id="dlList"></div>
+  </section>
+  </div>
+</div>
+
+<!-- приложение -->
+<div id="app" class="hidden">
+  <aside id="sidebar">
+    <header>
+      <img class="brandmark small" src="/logo.svg" width="28" height="28" alt="">
+      <div class="brand clickable" id="brandProfile"><b>Freedom</b><small id="me" class="muted"></small></div>
+      <span class="spacer"></span>
+      <button class="ibtn" id="btnDm" title="Личное сообщение" data-icon="message"></button>
+      <button class="ibtn" id="btnNewRoom" title="Новая комната" data-icon="users"></button>
+      <button class="ibtn" id="btnDiscover" title="Найти комнаты" data-icon="compass"></button>
+      <button class="ibtn" id="btnLogout" title="Выйти" data-icon="logout"></button>
+    </header>
+    <div id="searchBox">
+      <span class="icon muted" data-icon="search" data-icon-size="17"></span>
+      <input id="roomSearch" placeholder="Поиск" autocomplete="off">
+    </div>
+    <div id="rooms"></div>
+  </aside>
+
+  <main id="chat">
+    <div id="empty" class="muted">Выберите чат слева</div>
+    <section id="chatView" class="hidden">
+      <header>
+        <button class="ibtn" id="back" title="Назад" data-icon="back"></button>
+        <div class="avatar clickable" id="chatAvatar"></div>
+        <div class="titles clickable" id="titleClick"><div id="title"></div><small id="subtitle" class="muted"></small></div>
+        <span class="spacer"></span>
+        <button class="ibtn" id="callAudio" title="Аудиозвонок" hidden data-icon="phone"></button>
+        <button class="ibtn" id="callVideo" title="Видеозвонок" hidden data-icon="video"></button>
+        <button class="ibtn" id="btnChatSearch" title="Поиск по чату" data-icon="search"></button>
+        <button class="ibtn" id="btnSec" title="Безопасность" data-icon="lock"></button>
+      </header>
+      <div id="searchPanel" class="hidden">
+        <div id="searchPanelBar">
+          <span class="icon" data-icon="search"></span>
+          <input id="chatSearchInput" placeholder="Поиск по загруженной истории" autocomplete="off">
+          <button class="ibtn" id="chatSearchClose" data-icon="close"></button>
+        </div>
+        <div id="searchResults"></div>
+      </div>
+      <div id="pinnedBar" class="hidden"></div>
+      <div id="scheduledBar" class="hidden"></div>
+      <div id="messages"></div>
+      <div id="busy" class="hidden">Отправка…</div>
+      <footer id="composer">
+        <div id="mentionList" class="hidden pickList"></div>
+        <div id="stickerTray" class="hidden"></div>
+        <div id="composerBar" class="hidden">
+          <span id="cbIconWrap" class="icon"></span>
+          <div class="composerBarText"><b id="cbTitle"></b><span id="cbPreview"></span></div>
+          <button class="ibtn" id="cbClose" data-icon="close"></button>
+        </div>
+        <div id="normalBar">
+          <label class="ibtn" title="Фото" data-icon="image"><input id="file" type="file" accept="image/*" hidden></label>
+          <label class="ibtn" title="Прикрепить файл" data-icon="file"><input id="fileDoc" type="file" hidden></label>
+          <button class="ibtn" id="pollBtn" title="Создать опрос" data-icon="poll"></button>
+          <button class="ibtn" id="stickerBtn" title="Стикеры" data-icon="sticker"></button>
+          <button class="ibtn" id="vidBtn" title="Видеосообщение" data-icon="camera"></button>
+          <textarea id="input" rows="1" placeholder="Сообщение"></textarea>
+          <button class="ibtn" id="micBtn" title="Голосовое сообщение" data-icon="mic"></button>
+          <button class="ibtn hidden" id="scheduleBtn" title="Запланировать отправку" data-icon="clock"></button>
+          <button class="ibtn accent hidden" id="sendBtn" title="Отправить" data-icon="send"></button>
+        </div>
+        <div id="recBar" class="hidden">
+          <span class="rec">●</span><span id="recTime">0:00</span><span class="spacer"></span>
+          <button id="recCancel">Отмена</button>
+          <button id="recSend" class="primary">Отправить</button>
+        </div>
+      </footer>
+    </section>
+  </main>
+</div>
+
+<!-- звонок -->
+<div id="callUi" class="hidden">
+  <div id="remoteVideos"></div>
+  <video id="localVideo" autoplay playsinline muted></video>
+  <div class="callInfo">
+    <div class="avatar big" id="callAvatar"></div>
+    <div id="callName"></div>
+    <div id="callStatus" class="muted"></div>
+    <small id="callLock" class="muted"><span class="icon" data-icon="lock" data-icon-size="13"></span> Сквозное шифрование</small>
+  </div>
+  <div class="callBtns">
+    <button id="cMute" class="round" title="Микрофон" data-icon="mic" data-icon-size="24"></button>
+    <button id="cCam" class="round" title="Камера" data-icon="camera" data-icon-size="24"></button>
+    <button id="cAccept" class="round green" title="Принять" data-icon="phone" data-icon-size="24"></button>
+    <button id="cEnd" class="round red" title="Завершить" data-icon="close" data-icon-size="24"></button>
+  </div>
+</div>
+
+<!-- диалоги -->
+<dialog id="pdlg">
+  <form method="dialog">
+    <h3 id="pTitle"></h3>
+    <input id="pInput" autocomplete="off">
+    <div class="btns"><button value="cancel">Отмена</button><button value="ok" class="primary">OK</button></div>
+  </form>
+</dialog>
+
+<dialog id="ddlg">
+  <h3>Публичные комнаты</h3>
+  <div id="dList" class="dlist"></div>
+  <div class="btns"><button id="dClose">Закрыть</button></div>
+</dialog>
+
+<dialog id="vdlg">
+  <video id="vprev" playsinline></video>
+  <div id="vtime" class="muted">0:00</div>
+  <div class="btns">
+    <button id="vRec" class="primary">● Запись</button>
+    <button id="vStop" class="red hidden">■ Стоп</button>
+    <button id="vRetry" class="hidden">Заново</button>
+    <button id="vSend" class="primary hidden">Отправить</button>
+    <button id="vClose">Закрыть</button>
+  </div>
+</dialog>
+
+<dialog id="sdlg">
+  <h3><span class="icon" data-icon="lock" data-icon-size="18"></span> Сквозное шифрование</h3>
+  <div id="sBody"></div>
+  <hr class="dlgDivider">
+  <p class="muted adHint">Самоудаление сообщений — новые сообщения в этом чате будут стираться у всех автоматически.</p>
+  <div id="adList" class="pickList"></div>
+  <div class="btns"><button id="sClose">Закрыть</button></div>
+</dialog>
+
+<dialog id="fwdlg">
+  <h3><span class="icon" data-icon="forward" data-icon-size="18"></span> Переслать</h3>
+  <div id="fwList" class="pickList"></div>
+  <div class="btns"><button id="fwCancel">Отмена</button></div>
+</dialog>
+
+<dialog id="pfdlg">
+  <h3><span class="icon" data-icon="message" data-icon-size="18"></span> Профиль</h3>
+  <div class="avatar big centered" id="pfAvatar"></div>
+  <p class="centered bold" id="pfUsername"></p>
+  <textarea id="pfBio" maxlength="200" placeholder="О себе (видно всем, кто найдёт вас по имени)" rows="3"></textarea>
+  <div class="err" id="pfErr"></div>
+  <div class="btns"><button id="pfCancel">Отмена</button><button id="pfSave" class="primary">Сохранить</button></div>
+  <hr class="dlgDivider">
+  <p class="muted centered qrHint">Покажите этот код, чтобы вас быстро добавили</p>
+  <div id="pfQr" class="qrWrap"></div>
+  <div class="btns"><button id="pfScan">Сканировать код контакта</button><button id="pfClose">Закрыть</button></div>
+</dialog>
+
+<dialog id="cdlg">
+  <h3 id="cName"></h3>
+  <div class="avatar big centered" id="cAvatar"></div>
+  <p class="muted centered" id="cBio"></p>
+  <label class="muted aliasLabel">Псевдоним (виден только вам на этом устройстве)</label>
+  <input id="cAlias" placeholder="Например, Мама" autocomplete="off" maxlength="40">
+  <div class="btns"><button id="cClose">Закрыть</button><button id="cSaveAlias" class="primary">Сохранить</button></div>
+</dialog>
+
+<dialog id="scheddlg">
+  <h3><span class="icon" data-icon="clock" data-icon-size="18"></span> Запланировать отправку</h3>
+  <input id="schedAt" type="datetime-local">
+  <div class="err" id="schedErr"></div>
+  <div class="btns"><button id="schedCancel">Отмена</button><button id="schedConfirm" class="primary">Запланировать</button></div>
+</dialog>
+
+<dialog id="schedlistdlg">
+  <h3><span class="icon" data-icon="clock" data-icon-size="18"></span> Запланированные сообщения</h3>
+  <div id="schedList" class="pickList"></div>
+  <div class="btns"><button id="schedListClose">Закрыть</button></div>
+</dialog>
+
+<dialog id="polldlg">
+  <h3><span class="icon" data-icon="poll" data-icon-size="18"></span> Новый опрос</h3>
+  <input id="pollQuestion" placeholder="Вопрос" maxlength="200" autocomplete="off">
+  <div id="pollOptions"></div>
+  <button id="pollAddOption">+ Добавить вариант</button>
+  <div class="err" id="pollErr"></div>
+  <div class="btns"><button id="pollCancel">Отмена</button><button id="pollCreate" class="primary">Создать</button></div>
+</dialog>
+
+<dialog id="stickerCatalogDlg">
+  <h3><span class="icon" data-icon="sticker" data-icon-size="18"></span> Каталог стикеров</h3>
+  <input id="stickerSearch" placeholder="Поиск пака по названию" autocomplete="off">
+  <div id="stickerPackList" class="pickList"></div>
+  <div class="btns"><button id="stickerCatalogClose">Закрыть</button><button id="stickerNewPack" class="primary">+ Создать пак</button></div>
+</dialog>
+
+<dialog id="stickerNewPackDlg">
+  <h3><span class="icon" data-icon="sticker" data-icon-size="18"></span> Новый пак стикеров</h3>
+  <input id="newPackName" placeholder="Название пака" maxlength="60" autocomplete="off">
+  <div class="err" id="newPackErr"></div>
+  <div class="btns"><button id="newPackCancel">Отмена</button><button id="newPackCreate" class="primary">Создать</button></div>
+</dialog>
+
+<dialog id="stickerPackDlg">
+  <h3 id="packDlgName"></h3>
+  <p class="muted" id="packDlgMeta"></p>
+  <div id="packDlgStickers" class="pickList"></div>
+  <label class="ibtn hidden" id="packDlgAddLabel" title="Добавить стикер">+ Добавить стикер<input id="packDlgAddFile" type="file" accept="image/*" hidden></label>
+  <div class="err" id="packDlgErr"></div>
+  <div class="btns">
+    <button id="packDlgClose">Закрыть</button>
+    <button id="packDlgDelete" class="danger hidden">Удалить пак</button>
+    <button id="packDlgInstall" class="primary"></button>
+  </div>
+</dialog>
+
+<input id="scanFile" type="file" accept="image/*" capture="environment" hidden>
+
+<dialog id="idlg"><img id="iview" alt=""></dialog>
+
+<div id="toast"></div>
+<script src="/icons.js"></script>
+<script src="/qr.js"></script>
+<script src="/e2ee.js"></script>
+<script src="/app.js"></script>
+<script src="/downloads.js"></script>
+</body>
+</html>
